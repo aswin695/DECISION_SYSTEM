@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust - Find Your Perfect Trip</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="video-bg">
+        <!-- We use a subtle CSS animated gradient instead of actual video to keep it clean and fast, 
+             but gives a beautiful dynamic feel -->
+        <div class="gradient-layer"></div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>Wanderlust</h1>
+            <p>Discover your next adventure tailored just for you.</p>
+        </header>
+
+        {% if error %}
+        <div class="error-msg">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <main class="glass-panel">
+            <form action="/" method="POST">
+                <div class="form-group">
+                    <label for="age">Your Age</label>
+                    <input type="number" id="age" name="age" min="1" max="120" value="25" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="budget">Budget Level</label>
+                    <div class="custom-select">
+                        <select id="budget" name="budget" required>
+                            <option value="Low">Low (Backpacker)</option>
+                            <option value="Medium" selected>Medium (Standard)</option>
+                            <option value="High">High (Luxury)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="landscape">Preferred Landscape</label>
+                    <div class="custom-select">
+                        <select id="landscape" name="landscape" required>
+                            <option value="Beach" selected>Beach & Ocean</option>
+                            <option value="Mountains">Mountains & Snow</option>
+                            <option value="City">Urban City</option>
+                            <option value="Countryside">Countryside & Nature</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Available Duration (Days)</label>
+                    <input type="number" id="duration" name="duration" min="1" max="365" value="5" required>
+                </div>
+
+                <button type="submit" class="cta-button">
+                    <span>Find My Destination</span>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

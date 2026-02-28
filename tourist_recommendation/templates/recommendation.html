@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Recommendations - Wanderlust</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="video-bg">
+        <div class="gradient-layer"></div>
+    </div>
+
+    <div class="container results-container">
+        <header>
+            <h1>Your Matches</h1>
+            <p>Based on your profile, here are the top destinations for you.</p>
+        </header>
+
+        <main class="recommendations-grid">
+            {% for dest in recommendations %}
+            <div class="destination-card glass-panel" style="animation-delay: {{ loop.index0 * 0.15 }}s;">
+                <div class="card-image-wrapper">
+                    <img src="{{ dest.image_url }}" alt="{{ dest.name }}" class="card-image">
+                    <div class="badge">{{ dest.landscape }}</div>
+                </div>
+                <div class="card-content">
+                    <h2>{{ dest.name }}</h2>
+                    <p class="description">{{ dest.description }}</p>
+                    <div class="details">
+                        <span class="detail-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2"
+                                fill="none">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                            Budget: {{ dest.budget }}
+                        </span>
+                        <span class="detail-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2"
+                                fill="none">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Min {{ dest.min_days }} Days
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="glass-panel no-results">
+                <h2>No perfect matches found.</h2>
+                <p>Try adjusting your criteria!</p>
+            </div>
+            {% endfor %}
+        </main>
+
+        <div class="action-footer">
+            <a href="/" class="secondary-button">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Search Again
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
