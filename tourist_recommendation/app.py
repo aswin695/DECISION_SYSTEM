@@ -12,25 +12,56 @@ app = Flask(__name__)
 # Cache for Wikipedia results to avoid slow repeated lookups
 wiki_cache = {}
 
-def generate_highlights(landscape):
+def get_city_links(city_name):
+    try:
+        url = f"https://en.wikipedia.org/w/api.php?action=query&prop=links&plnamespace=0&pllimit=20&format=json&titles={urllib.parse.quote(city_name)}"
+        req = urllib.request.Request(url, headers={'User-Agent': 'WanderlustApp/1.0'})
+        with urllib.request.urlopen(req, timeout=3) as r:
+            data = json.loads(r.read().decode())
+            pages = data['query']['pages']
+            page = list(pages.values())[0]
+            
+            if 'links' in page:
+                # filter links that are too short or look like generic words
+                return [link['title'] for link in page['links'] if len(link['title']) > 5 and 'List of' not in link['title'] and 'History of' not in link['title']]
+            return []
+    except Exception as e:
+        return []
+
+def generate_highlights(landscape, city_name):
     highlights = []
     
+    entities = get_city_links(city_name)
+    
+    if len(entities) < 2:
+        if landscape == 'Beach':
+            entities = ['Local Coastlines', 'Hidden Coves']
+        elif landscape == 'Mountains':
+            entities = ['Hiking Trails', 'Scenic Viewpoints']
+        elif landscape == 'City':
+            entities = ['Historic Downtown', 'Central Plazas']
+        else:
+            entities = ['Nature Reserves', 'Local Farms']
+            
+    random.shuffle(entities)
+    dynamic_place = entities[0] if entities else "local landmarks"
+    
     if landscape == 'Beach':
-        highlights.append({'icon': '🏖️', 'title': 'Must Visit', 'text': 'Pristine local coastlines & hidden coves'})
-        highlights.append({'icon': '🍤', 'title': 'Food Spot', 'text': 'Fresh coastal seafood & beachfront dining'})
-        highlights.append({'icon': '🏄', 'title': 'Try', 'text': 'Water sports or sunset cruises'})
+        highlights.append({'icon': '🏖️', 'title': 'Must Visit', 'text': f'Explore {dynamic_place} and relax by the pristine water.'})
+        highlights.append({'icon': '🍤', 'title': 'Food Spot', 'text': 'Enjoy local seafood catches & beachfront dining.'})
+        highlights.append({'icon': '🏄', 'title': 'Try', 'text': 'Experience aquatic sports or sunset cruises.'})
     elif landscape == 'Mountains':
-        highlights.append({'icon': '🏔️', 'title': 'Must Visit', 'text': 'Panoramic viewing points & hiking trails'})
-        highlights.append({'icon': '🍲', 'title': 'Food Spot', 'text': 'Cozy local taverns with warm mountain fare'})
-        highlights.append({'icon': '🧗', 'title': 'Try', 'text': 'Guided nature walks or adventure sports'})
+        highlights.append({'icon': '🏔️', 'title': 'Must Visit', 'text': f'Discover {dynamic_place} and panoramic trails.'})
+        highlights.append({'icon': '🍲', 'title': 'Food Spot', 'text': 'Taste warm mountain fare in local taverns.'})
+        highlights.append({'icon': '🧗', 'title': 'Try', 'text': 'Challenge yourself with guided nature walks.'})
     elif landscape == 'City':
-        highlights.append({'icon': '🏛️', 'title': 'Must Visit', 'text': 'Historic downtown & iconic monuments'})
-        highlights.append({'icon': '🍷', 'title': 'Food Spot', 'text': 'Bustling street food markets & fine dining'})
-        highlights.append({'icon': '🎭', 'title': 'Try', 'text': 'Walking tours & exploring the vibrant nightlife'})
+        highlights.append({'icon': '🏛️', 'title': 'Must Visit', 'text': f'Tour {dynamic_place} and iconic monuments.'})
+        highlights.append({'icon': '🍷', 'title': 'Food Spot', 'text': 'Savor dishes at bustling street food markets.'})
+        highlights.append({'icon': '🎭', 'title': 'Try', 'text': 'Immerse in the culture and vibrant nightlife.'})
     else:  # Countryside
-        highlights.append({'icon': '🌳', 'title': 'Must Visit', 'text': 'Serene nature reserves & local farms'})
-        highlights.append({'icon': '🥧', 'title': 'Food Spot', 'text': 'Farm-to-table restaurants & local bakeries'})
-        highlights.append({'icon': '🚲', 'title': 'Try', 'text': 'Cycling routes & cultural heritage tours'})
+        highlights.append({'icon': '🌳', 'title': 'Must Visit', 'text': f'Wander through {dynamic_place} and serene landscapes.'})
+        highlights.append({'icon': '🥧', 'title': 'Food Spot', 'text': 'Dine at traditional farm-to-table restaurants.'})
+        highlights.append({'icon': '🚲', 'title': 'Try', 'text': 'Take cycling routes showing local heritage.'})
         
     return highlights
 
@@ -101,27 +132,19 @@ def determine_budget(tz_name):
         return 'Low'
     return 'Medium'
 
+import concurrent.futures
+
 def get_realtime_recommendations(age, budget, landscape, duration):
     all_tzs = [tz for tz in pytz.common_timezones if '/' in tz and not tz.startswith('Etc/')]
     
-    # Shuffle to ensure variety, but we don't lock to a tiny sample.
+    # Shuffle to ensure variety
     random.shuffle(all_tzs)
     
+    # Take a chunk of exactly 40 random timezones to process concurrently
+    sample_tzs = all_tzs[:40]
     scored_destinations = []
     
-    # Limit max API calls to avoid unacceptably long loading times if no perfect matches are found.
-    api_calls = 0
-    max_api_calls = 40
-    
-    for tz_name in all_tzs:
-        # Check if we have 3 very strong matches (Score >= 70 basically ensures landscape and budget met)
-        good_matches = [dest for score, dest in scored_destinations if score >= 70]
-        if len(good_matches) >= 3:
-            break
-            
-        if api_calls >= max_api_calls:
-            break
-            
+    def process_destination(tz_name):
         parts = tz_name.split('/')
         region = parts[0]
         city_raw = parts[-1]
@@ -132,14 +155,12 @@ def get_realtime_recommendations(age, budget, landscape, duration):
         hour = local_time.hour
         
         info = get_city_info(city_name)
-        api_calls += 1
-        
         if not info:
-            continue
+            return None
             
         dest_landscape = determine_landscape(info['description'])
         dest_budget = determine_budget(tz_name)
-        dest_highlights = generate_highlights(dest_landscape)
+        dest_highlights = generate_highlights(dest_landscape, city_name)
         
         score = 0
         
@@ -160,7 +181,6 @@ def get_realtime_recommendations(age, budget, landscape, duration):
             score -= 20  # Penalize if it's over budget
             
         # 3. Consider Age
-        # Give logical bonuses to make the trip worthy for their life stage
         if age < 30:
             if dest_budget == 'Low': score += 10
             if dest_landscape in ['City', 'Mountains']: score += 10
@@ -171,7 +191,7 @@ def get_realtime_recommendations(age, budget, landscape, duration):
             if dest_budget in ['Medium', 'High']: score += 10
             if dest_landscape in ['Countryside', 'Beach']: score += 10
             
-        # 4. Duration - ensuring the trip is worthy of the time
+        # 4. Duration 
         if dest_landscape == 'Mountains':
             min_days = 4
         elif dest_landscape == 'Countryside':
@@ -182,11 +202,11 @@ def get_realtime_recommendations(age, budget, landscape, duration):
             min_days = 2 # City
             
         if duration < min_days:
-            score -= 40  # Heavy penalty: Trip is too short to be worthy
+            score -= 40  # Heavy penalty
         elif duration >= min_days + 3:
-            score += 20  # Bonus: Plenty of days to fully experience it!
+            score += 20  # Bonus
         else:
-            score += 10  # Good amount of time
+            score += 10  
             
         # 5. Real-time timezone boosting
         if 8 <= hour <= 18: 
@@ -196,11 +216,21 @@ def get_realtime_recommendations(age, budget, landscape, duration):
         else:
             score -= 5
             
-        # Only keep it if it's somewhat decent
         if score > 0:
-            desc = info['description']
-            if len(desc) > 180:
-                desc = desc[:177] + "..."
+            if dest_landscape == 'Beach':
+                adj = random.choice(['sun-drenched', 'tropical', 'coastal', 'breezy', 'relaxing'])
+                act = random.choice(['relaxing by the ocean', 'enjoying sandy shores', 'exploring hidden coves'])
+            elif dest_landscape == 'Mountains':
+                adj = random.choice(['scenic', 'elevated', 'rugged', 'alpine', 'breathtaking'])
+                act = random.choice(['exploring nature trails', 'hiking massive peaks', 'enjoying fresh air'])
+            elif dest_landscape == 'City':
+                adj = random.choice(['bustling', 'vibrant', 'historic', 'cosmopolitan', 'lively'])
+                act = random.choice(['discovering urban culture', 'visiting iconic landmarks', 'enjoying local cuisine'])
+            else:
+                adj = random.choice(['serene', 'tranquil', 'lush', 'peaceful', 'charming'])
+                act = random.choice(['experiencing local charm', 'enjoying green pastures', 'discovering quiet roads'])
+                
+            desc = f"A {adj} destination in {region}, perfect for {act} on a {dest_budget.lower()}-cost budget."
                 
             dest_data = {
                 "name": f"{city_name}, {region}",
@@ -214,7 +244,16 @@ def get_realtime_recommendations(age, budget, landscape, duration):
                 "highlights": dest_highlights,
                 "raw_score": score
             }
-            scored_destinations.append((score, dest_data))
+            return (score, dest_data)
+        return None
+
+    # Execute requests concurrently to speed up response times massively
+    with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
+        results = executor.map(process_destination, sample_tzs)
+        
+    for res in results:
+        if res:
+            scored_destinations.append(res)
             
     scored_destinations.sort(key=lambda x: x[0], reverse=True)
     
@@ -227,9 +266,6 @@ def get_realtime_recommendations(age, budget, landscape, duration):
                 # Top match always gets > 90%
                 dest["match_score"] = random.randint(91, 98)
             else:
-                # 2nd and 3rd match always get between 70% and 90%
-                # Use the raw score to slightly influence where in the 70-89 range they land
-                # or just purely randomize it so it feels dynamic
                 dest["match_score"] = random.randint(72, 89)
                 
     return [item[1] for item in scored_destinations[:3]]
