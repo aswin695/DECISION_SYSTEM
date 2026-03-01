@@ -1,0 +1,28 @@
+- What filters do people care about most when picking a travel destination
+- How do real travel recommendation websites sort their results
+- Rule based vs AI recommendation engines for travel apps
+- What is a good minimum number of days for an international mountain trip
+- How to categorize global countries into high budget and low budget tiers
+- Algorithm for matching user preferences to vacation spots
+- Best way to rank and score places based on multiple user requirements
+- How to calculate a travel destination match percentage based on budget and climate
+- How to handle conflicting user inputs in a recommendation system
+- The recommendations isnt based on what the user inputs make sure the user input is correctly satisfied
+- also consider the age and duration to make the trip worthy
+- also generate a score for the recommendation showing the relevance with users input
+- Provide the constraints to be checked while building this app
+- Provide the project structure for simple web app using python that satisfies most of the constraints
+- Build a simple web app using python to accept the users input such as age, expenses, preferred places, duration, etc for them to get a good recommendation on their next tourist destination
+- remove the dummy database and make sure to get real time recommendations based on the current time in places
+- provide a brief idea about the destination the user chooses from recommendation when a option is clicked the details can be places to visit there, food spots, must have/try etc
+- How to read data from a website in python without downloading it
+- parse json response from urlopen python
+- How to ask wikipedia api for links on a page python
+- urlencode a string in python 3
+- Exception handling in python urllib
+- How to get current time of a country in python
+- python pytz timezone list
+- How to sort a list of dictionaries in python by score
+- How to pick a random item from a list in python
+- random randint between two numbers in python
+- How to run background tasks or multithreading in python
