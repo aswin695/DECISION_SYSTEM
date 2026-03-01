@@ -12,6 +12,28 @@ app = Flask(__name__)
 # Cache for Wikipedia results to avoid slow repeated lookups
 wiki_cache = {}
 
+def generate_highlights(landscape):
+    highlights = []
+    
+    if landscape == 'Beach':
+        highlights.append({'icon': '🏖️', 'title': 'Must Visit', 'text': 'Pristine local coastlines & hidden coves'})
+        highlights.append({'icon': '🍤', 'title': 'Food Spot', 'text': 'Fresh coastal seafood & beachfront dining'})
+        highlights.append({'icon': '🏄', 'title': 'Try', 'text': 'Water sports or sunset cruises'})
+    elif landscape == 'Mountains':
+        highlights.append({'icon': '🏔️', 'title': 'Must Visit', 'text': 'Panoramic viewing points & hiking trails'})
+        highlights.append({'icon': '🍲', 'title': 'Food Spot', 'text': 'Cozy local taverns with warm mountain fare'})
+        highlights.append({'icon': '🧗', 'title': 'Try', 'text': 'Guided nature walks or adventure sports'})
+    elif landscape == 'City':
+        highlights.append({'icon': '🏛️', 'title': 'Must Visit', 'text': 'Historic downtown & iconic monuments'})
+        highlights.append({'icon': '🍷', 'title': 'Food Spot', 'text': 'Bustling street food markets & fine dining'})
+        highlights.append({'icon': '🎭', 'title': 'Try', 'text': 'Walking tours & exploring the vibrant nightlife'})
+    else:  # Countryside
+        highlights.append({'icon': '🌳', 'title': 'Must Visit', 'text': 'Serene nature reserves & local farms'})
+        highlights.append({'icon': '🥧', 'title': 'Food Spot', 'text': 'Farm-to-table restaurants & local bakeries'})
+        highlights.append({'icon': '🚲', 'title': 'Try', 'text': 'Cycling routes & cultural heritage tours'})
+        
+    return highlights
+
 def get_city_info(city_name):
     if city_name in wiki_cache:
         return wiki_cache[city_name]
@@ -117,6 +139,7 @@ def get_realtime_recommendations(age, budget, landscape, duration):
             
         dest_landscape = determine_landscape(info['description'])
         dest_budget = determine_budget(tz_name)
+        dest_highlights = generate_highlights(dest_landscape)
         
         score = 0
         
@@ -187,7 +210,8 @@ def get_realtime_recommendations(age, budget, landscape, duration):
                 "description": desc,
                 "image_url": info['image_url'],
                 "local_time": local_time.strftime("%I:%M %p"),
-                "time_status": "Daytime ☀️" if 6 <= hour <= 18 else "Nighttime 🌙"
+                "time_status": "Daytime ☀️" if 6 <= hour <= 18 else "Nighttime 🌙",
+                "highlights": dest_highlights
             }
             scored_destinations.append((score, dest_data))
             

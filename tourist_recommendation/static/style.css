@@ -49,8 +49,13 @@ body {
 }
 
 @keyframes rotateGradient {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Layout */
@@ -77,6 +82,7 @@ h1 {
     margin-bottom: 0.5rem;
     background: linear-gradient(135deg, #60a5fa, #a78bfa);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
 }
@@ -111,7 +117,8 @@ label {
     color: var(--text-secondary);
 }
 
-input[type="number"], select {
+input[type="number"],
+select {
     width: 100%;
     padding: 1rem 1.2rem;
     background: rgba(15, 23, 42, 0.6);
@@ -124,7 +131,8 @@ input[type="number"], select {
     outline: none;
 }
 
-input[type="number"]:focus, select:focus {
+input[type="number"]:focus,
+select:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
 }
@@ -227,7 +235,7 @@ input[type="number"]:focus, select:focus {
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .card-content {
@@ -302,23 +310,96 @@ input[type="number"]:focus, select:focus {
 
 /* Animations */
 @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Highlights Section */
+.highlights-section {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.highlights-section h4 {
+    margin: 0 0 0.8rem 0;
+    font-size: 0.95rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.highlights-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.highlights-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.highlight-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    margin-top: 0.1rem;
+}
+
+.highlight-text strong {
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    h1 { font-size: 2.2rem; }
-    .container { padding: 1rem; }
-    .glass-panel { padding: 1.5rem; }
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .glass-panel {
+        padding: 1.5rem;
+    }
 }
