@@ -28,42 +28,29 @@ def get_city_links(city_name):
     except Exception as e:
         return []
 
+DEFAULT_ENTITIES = {
+    'Beach': ['Local Coastlines', 'Hidden Coves'],
+    'Mountains': ['Hiking Trails', 'Scenic Viewpoints'],
+    'City': ['Historic Downtown', 'Central Plazas'],
+    'Countryside': ['Nature Reserves', 'Local Farms']
+}
+
+HIGHLIGHTS_DATA = {
+    'Beach': [('🏖️', 'Must Visit', 'Explore {place} and relax by the pristine water.'), ('🍤', 'Food Spot', 'Enjoy local seafood catches & beachfront dining.'), ('🏄', 'Try', 'Experience aquatic sports or sunset cruises.')],
+    'Mountains': [('🏔️', 'Must Visit', 'Discover {place} and panoramic trails.'), ('🍲', 'Food Spot', 'Taste warm mountain fare in local taverns.'), ('🧗', 'Try', 'Challenge yourself with guided nature walks.')],
+    'City': [('🏛️', 'Must Visit', 'Tour {place} and iconic monuments.'), ('🍷', 'Food Spot', 'Savor dishes at bustling street food markets.'), ('🎭', 'Try', 'Immerse in the culture and vibrant nightlife.')],
+    'Countryside': [('🌳', 'Must Visit', 'Wander through {place} and serene landscapes.'), ('🥧', 'Food Spot', 'Dine at traditional farm-to-table restaurants.'), ('🚲', 'Try', 'Take cycling routes showing local heritage.')]
+}
+
 def generate_highlights(landscape, city_name):
-    highlights = []
-    
     entities = get_city_links(city_name)
-    
     if len(entities) < 2:
-        if landscape == 'Beach':
-            entities = ['Local Coastlines', 'Hidden Coves']
-        elif landscape == 'Mountains':
-            entities = ['Hiking Trails', 'Scenic Viewpoints']
-        elif landscape == 'City':
-            entities = ['Historic Downtown', 'Central Plazas']
-        else:
-            entities = ['Nature Reserves', 'Local Farms']
-            
-    random.shuffle(entities)
-    dynamic_place = entities[0] if entities else "local landmarks"
-    
-    if landscape == 'Beach':
-        highlights.append({'icon': '🏖️', 'title': 'Must Visit', 'text': f'Explore {dynamic_place} and relax by the pristine water.'})
-        highlights.append({'icon': '🍤', 'title': 'Food Spot', 'text': 'Enjoy local seafood catches & beachfront dining.'})
-        highlights.append({'icon': '🏄', 'title': 'Try', 'text': 'Experience aquatic sports or sunset cruises.'})
-    elif landscape == 'Mountains':
-        highlights.append({'icon': '🏔️', 'title': 'Must Visit', 'text': f'Discover {dynamic_place} and panoramic trails.'})
-        highlights.append({'icon': '🍲', 'title': 'Food Spot', 'text': 'Taste warm mountain fare in local taverns.'})
-        highlights.append({'icon': '🧗', 'title': 'Try', 'text': 'Challenge yourself with guided nature walks.'})
-    elif landscape == 'City':
-        highlights.append({'icon': '🏛️', 'title': 'Must Visit', 'text': f'Tour {dynamic_place} and iconic monuments.'})
-        highlights.append({'icon': '🍷', 'title': 'Food Spot', 'text': 'Savor dishes at bustling street food markets.'})
-        highlights.append({'icon': '🎭', 'title': 'Try', 'text': 'Immerse in the culture and vibrant nightlife.'})
-    else:  # Countryside
-        highlights.append({'icon': '🌳', 'title': 'Must Visit', 'text': f'Wander through {dynamic_place} and serene landscapes.'})
-        highlights.append({'icon': '🥧', 'title': 'Food Spot', 'text': 'Dine at traditional farm-to-table restaurants.'})
-        highlights.append({'icon': '🚲', 'title': 'Try', 'text': 'Take cycling routes showing local heritage.'})
+        entities = DEFAULT_ENTITIES.get(landscape, DEFAULT_ENTITIES['Countryside'])
         
-    return highlights
+    place = random.choice(entities) if entities else "local landmarks"
+    data = HIGHLIGHTS_DATA.get(landscape, HIGHLIGHTS_DATA['Countryside'])
+    
+    return [{'icon': i, 'title': t, 'text': text.format(place=place)} for i, t, text in data]
 
 def get_city_info(city_name):
     if city_name in wiki_cache:
@@ -108,28 +95,13 @@ for countrycode in pytz.country_timezones:
     for tz in pytz.country_timezones[countrycode]:
         timezone_country[tz] = countrycode
 
+HIGH_BUDGET = {'US', 'GB', 'FR', 'DE', 'CH', 'JP', 'AU', 'CA', 'NO', 'SE', 'DK', 'FI', 'NL', 'BE', 'AT', 'IE', 'NZ', 'SG', 'IS', 'AE', 'QA', 'LU', 'MC', 'IL', 'BS', 'BM', 'KY'}
+LOW_BUDGET = {'IN', 'ID', 'VN', 'TH', 'PH', 'EG', 'MA', 'PE', 'CO', 'BO', 'KE', 'TZ', 'NP', 'LK', 'KH', 'MG', 'PK', 'BD', 'MM', 'LA', 'GT', 'HN', 'NI', 'SV', 'EC', 'PY', 'ZW', 'ZM', 'MW', 'UG', 'SN', 'GH', 'DZ', 'TN'}
+
 def determine_budget(tz_name):
     country_code = timezone_country.get(tz_name)
-    
-    # High Budget Countries (Luxury)
-    high_budget = [
-        'US', 'GB', 'FR', 'DE', 'CH', 'JP', 'AU', 'CA', 'NO', 'SE', 
-        'DK', 'FI', 'NL', 'BE', 'AT', 'IE', 'NZ', 'SG', 'IS', 'AE', 
-        'QA', 'LU', 'MC', 'IL', 'BS', 'BM', 'KY'
-    ]
-    
-    # Low Budget Countries (Backpacker)
-    low_budget = [
-        'IN', 'ID', 'VN', 'TH', 'PH', 'EG', 'MA', 'PE', 'CO', 'BO', 
-        'KE', 'TZ', 'NP', 'LK', 'KH', 'MG', 'PK', 'BD', 'MM', 'LA', 
-        'GT', 'HN', 'NI', 'SV', 'EC', 'PY', 'ZW', 'ZM', 'MW', 'UG',
-        'SN', 'GH', 'DZ', 'TN'
-    ]
-    
-    if country_code in high_budget:
-        return 'High'
-    elif country_code in low_budget:
-        return 'Low'
+    if country_code in HIGH_BUDGET: return 'High'
+    if country_code in LOW_BUDGET: return 'Low'
     return 'Medium'
 
 import concurrent.futures
@@ -217,20 +189,14 @@ def get_realtime_recommendations(age, budget, landscape, duration):
             score -= 5
             
         if score > 0:
-            if dest_landscape == 'Beach':
-                adj = random.choice(['sun-drenched', 'tropical', 'coastal', 'breezy', 'relaxing'])
-                act = random.choice(['relaxing by the ocean', 'enjoying sandy shores', 'exploring hidden coves'])
-            elif dest_landscape == 'Mountains':
-                adj = random.choice(['scenic', 'elevated', 'rugged', 'alpine', 'breathtaking'])
-                act = random.choice(['exploring nature trails', 'hiking massive peaks', 'enjoying fresh air'])
-            elif dest_landscape == 'City':
-                adj = random.choice(['bustling', 'vibrant', 'historic', 'cosmopolitan', 'lively'])
-                act = random.choice(['discovering urban culture', 'visiting iconic landmarks', 'enjoying local cuisine'])
-            else:
-                adj = random.choice(['serene', 'tranquil', 'lush', 'peaceful', 'charming'])
-                act = random.choice(['experiencing local charm', 'enjoying green pastures', 'discovering quiet roads'])
-                
-            desc = f"A {adj} destination in {region}, perfect for {act} on a {dest_budget.lower()}-cost budget."
+            DESC_DATA = {
+                'Beach': (['sun-drenched', 'tropical', 'coastal', 'breezy', 'relaxing'], ['relaxing by the ocean', 'enjoying sandy shores', 'exploring hidden coves']),
+                'Mountains': (['scenic', 'elevated', 'rugged', 'alpine', 'breathtaking'], ['exploring nature trails', 'hiking massive peaks', 'enjoying fresh air']),
+                'City': (['bustling', 'vibrant', 'historic', 'cosmopolitan', 'lively'], ['discovering urban culture', 'visiting iconic landmarks', 'enjoying local cuisine']),
+                'Countryside': (['serene', 'tranquil', 'lush', 'peaceful', 'charming'], ['experiencing local charm', 'enjoying green pastures', 'discovering quiet roads'])
+            }
+            adjs, acts = DESC_DATA.get(dest_landscape, DESC_DATA['Countryside'])
+            desc = f"A {random.choice(adjs)} destination in {region}, perfect for {random.choice(acts)} on a {dest_budget.lower()}-cost budget."
                 
             dest_data = {
                 "name": f"{city_name}, {region}",
