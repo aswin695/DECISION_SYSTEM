@@ -25,7 +25,12 @@
             <div class="destination-card glass-panel" style="animation-delay: {{ loop.index0 * 0.15 }}s;">
                 <div class="card-image-wrapper">
                     <img src="{{ dest.image_url }}" alt="{{ dest.name }}" class="card-image">
-                    <div class="badge">{{ dest.landscape }}</div>
+                    <div class="badge-container">
+                        <div class="badge">{{ dest.landscape }}</div>
+                        {% if dest.match_score %}
+                        <div class="badge match-badge">{{ dest.match_score }}% Match</div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="card-content">
                     <h2>{{ dest.name }}</h2>
