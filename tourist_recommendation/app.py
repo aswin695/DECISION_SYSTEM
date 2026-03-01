@@ -49,22 +49,57 @@ def determine_landscape(description):
         return 'City'
     return 'Countryside'
 
-def determine_budget(region):
-    if region in ['Europe', 'US', 'Canada', 'Australia', 'Pacific']:
+# Create a mapping from timezone back to country code
+timezone_country = {}
+for countrycode in pytz.country_timezones:
+    for tz in pytz.country_timezones[countrycode]:
+        timezone_country[tz] = countrycode
+
+def determine_budget(tz_name):
+    country_code = timezone_country.get(tz_name)
+    
+    # High Budget Countries (Luxury)
+    high_budget = [
+        'US', 'GB', 'FR', 'DE', 'CH', 'JP', 'AU', 'CA', 'NO', 'SE', 
+        'DK', 'FI', 'NL', 'BE', 'AT', 'IE', 'NZ', 'SG', 'IS', 'AE', 
+        'QA', 'LU', 'MC', 'IL', 'BS', 'BM', 'KY'
+    ]
+    
+    # Low Budget Countries (Backpacker)
+    low_budget = [
+        'IN', 'ID', 'VN', 'TH', 'PH', 'EG', 'MA', 'PE', 'CO', 'BO', 
+        'KE', 'TZ', 'NP', 'LK', 'KH', 'MG', 'PK', 'BD', 'MM', 'LA', 
+        'GT', 'HN', 'NI', 'SV', 'EC', 'PY', 'ZW', 'ZM', 'MW', 'UG',
+        'SN', 'GH', 'DZ', 'TN'
+    ]
+    
+    if country_code in high_budget:
         return 'High'
-    elif region in ['Asia', 'Africa', 'America']: 
+    elif country_code in low_budget:
         return 'Low'
     return 'Medium'
 
 def get_realtime_recommendations(age, budget, landscape, duration):
     all_tzs = [tz for tz in pytz.common_timezones if '/' in tz and not tz.startswith('Etc/')]
     
-    # Randomly sample to keep API calls reasonable per request
-    sample_tzs = random.sample(all_tzs, min(25, len(all_tzs)))
+    # Shuffle to ensure variety, but we don't lock to a tiny sample.
+    random.shuffle(all_tzs)
     
     scored_destinations = []
     
-    for tz_name in sample_tzs:
+    # Limit max API calls to avoid unacceptably long loading times if no perfect matches are found.
+    api_calls = 0
+    max_api_calls = 40
+    
+    for tz_name in all_tzs:
+        # Check if we have 3 very strong matches (Score >= 70 basically ensures landscape and budget met)
+        good_matches = [dest for score, dest in scored_destinations if score >= 70]
+        if len(good_matches) >= 3:
+            break
+            
+        if api_calls >= max_api_calls:
+            break
+            
         parts = tz_name.split('/')
         region = parts[0]
         city_raw = parts[-1]
@@ -75,39 +110,71 @@ def get_realtime_recommendations(age, budget, landscape, duration):
         hour = local_time.hour
         
         info = get_city_info(city_name)
+        api_calls += 1
+        
         if not info:
             continue
             
         dest_landscape = determine_landscape(info['description'])
-        dest_budget = determine_budget(region)
+        dest_budget = determine_budget(tz_name)
         
         score = 0
         
+        # 1. Strictly weight landscape matches.
         if dest_landscape == landscape:
-            score += 50
+            score += 60
+        else:
+            score -= 40  # Heavy penalty for wrong landscape
             
+        # 2. Strictly weight budget matches.
         if dest_budget == budget:
             score += 30
         elif (dest_budget == 'Low' and budget in ['Medium', 'High']):
-            score += 15
+            score += 15  # Being cheaper is still somewhat acceptable
         elif (dest_budget == 'Medium' and budget == 'High'):
             score += 15
-            
-        min_days = 2
-        if duration >= min_days:
-            score += 10
-            
-        # Real-time scoring based on current time
-        # Boost places where it's currently daytime
-        if 8 <= hour <= 18: 
-            score += 35
-        elif 6 <= hour < 8 or 18 < hour <= 21:
-            score += 15
         else:
-            score -= 10
+            score -= 20  # Penalize if it's over budget
             
+        # 3. Consider Age
+        # Give logical bonuses to make the trip worthy for their life stage
+        if age < 30:
+            if dest_budget == 'Low': score += 10
+            if dest_landscape in ['City', 'Mountains']: score += 10
+        elif 30 <= age < 50:
+            if dest_budget == 'Medium': score += 10
+            if dest_landscape in ['Beach', 'City']: score += 10
+        else: # 50+
+            if dest_budget in ['Medium', 'High']: score += 10
+            if dest_landscape in ['Countryside', 'Beach']: score += 10
+            
+        # 4. Duration - ensuring the trip is worthy of the time
+        if dest_landscape == 'Mountains':
+            min_days = 4
+        elif dest_landscape == 'Countryside':
+            min_days = 3
+        elif dest_landscape == 'Beach':
+            min_days = 3
+        else:
+            min_days = 2 # City
+            
+        if duration < min_days:
+            score -= 40  # Heavy penalty: Trip is too short to be worthy
+        elif duration >= min_days + 3:
+            score += 20  # Bonus: Plenty of days to fully experience it!
+        else:
+            score += 10  # Good amount of time
+            
+        # 5. Real-time timezone boosting
+        if 8 <= hour <= 18: 
+            score += 15
+        elif 6 <= hour < 8 or 18 < hour <= 21:
+            score += 5
+        else:
+            score -= 5
+            
+        # Only keep it if it's somewhat decent
         if score > 0:
-            # Shorten description
             desc = info['description']
             if len(desc) > 180:
                 desc = desc[:177] + "..."
