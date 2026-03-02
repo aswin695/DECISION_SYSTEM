@@ -26,3 +26,4 @@
 - How to pick a random item from a list in python
 - random randint between two numbers in python
 - How to run background tasks or multithreading in python
+- How to host a website in netlifly?
