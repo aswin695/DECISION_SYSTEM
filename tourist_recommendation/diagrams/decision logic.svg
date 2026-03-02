@@ -1,15 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="424pt" height="1016pt" viewBox="0.00 0.00 424.00 1016.00">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1011.78)">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="424pt" height="1040pt" viewBox="0.00 0.00 424.00 1040.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1035.54)">
 <title>TravelDecisionEngine</title>
-<polygon fill="white" stroke="none" points="-4,4 -4,-1011.78 419.65,-1011.78 419.65,4 -4,4"/>
+<polygon fill="white" stroke="none" points="-4,4 -4,-1035.54 419.65,-1035.54 419.65,4 -4,4"/>
 <!-- Start -->
 <g id="node1" class="node">
 <title>Start</title>
-<ellipse fill="none" stroke="black" cx="213.69" cy="-954.61" rx="111.21" ry="53.17"/>
-<text xml:space="preserve" text-anchor="middle" x="213.69" y="-975.61" font-family="Helvetica,sans-Serif" font-size="14.00">User Inputs:</text>
-<text xml:space="preserve" text-anchor="middle" x="213.69" y="-958.81" font-family="Helvetica,sans-Serif" font-size="14.00">Age=25</text>
-<text xml:space="preserve" text-anchor="middle" x="213.69" y="-942.01" font-family="Helvetica,sans-Serif" font-size="14.00">Landscape=Mountains</text>
-<text xml:space="preserve" text-anchor="middle" x="213.69" y="-925.21" font-family="Helvetica,sans-Serif" font-size="14.00">Budget=Medium</text>
+<ellipse fill="none" stroke="black" cx="213.69" cy="-966.49" rx="64.68" ry="65.05"/>
+<text xml:space="preserve" text-anchor="middle" x="213.69" y="-995.89" font-family="Helvetica,sans-Serif" font-size="14.00">User Inputs:</text>
+<text xml:space="preserve" text-anchor="middle" x="213.69" y="-979.09" font-family="Helvetica,sans-Serif" font-size="14.00">Age</text>
+<text xml:space="preserve" text-anchor="middle" x="213.69" y="-962.29" font-family="Helvetica,sans-Serif" font-size="14.00">Landscape</text>
+<text xml:space="preserve" text-anchor="middle" x="213.69" y="-945.49" font-family="Helvetica,sans-Serif" font-size="14.00">Budget</text>
+<text xml:space="preserve" text-anchor="middle" x="213.69" y="-928.69" font-family="Helvetica,sans-Serif" font-size="14.00">Duration</text>
 </g>
 <!-- Initialize -->
 <g id="node2" class="node">
@@ -20,8 +21,8 @@
 <!-- Start&#45;&gt;Initialize -->
 <g id="edge1" class="edge">
 <title>Start-&gt;Initialize</title>
-<path fill="none" stroke="black" d="M213.69,-901.14C213.69,-892.5 213.69,-883.84 213.69,-876.07"/>
-<polygon fill="black" stroke="black" points="217.19,-876.24 213.69,-866.24 210.19,-876.24 217.19,-876.24"/>
+<path fill="none" stroke="black" d="M213.69,-900.93C213.69,-892.28 213.69,-883.78 213.69,-876.2"/>
+<polygon fill="black" stroke="black" points="217.19,-876.3 213.69,-866.3 210.19,-876.3 217.19,-876.3"/>
 </g>
 <!-- BudgetCheck -->
 <g id="node3" class="node">
