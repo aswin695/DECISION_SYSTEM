@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="995pt" height="228pt" viewBox="0.00 0.00 995.00 228.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 224.5)">
+<title>Level2_DFD</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-224.5 990.75,-224.5 990.75,4 -4,4"/>
+<text xml:space="preserve" text-anchor="middle" x="493.38" y="-200.3" font-family="Times,serif" font-size="18.00">Level 2 DFD – Process 2.0 Apply Constraints &amp; Scoring</text>
+<!-- D1 -->
+<g id="node1" class="node">
+<title>D1</title>
+<path fill="none" stroke="black" d="M110.47,-118.85C110.47,-121.72 85.71,-124.05 55.24,-124.05 24.76,-124.05 0,-121.72 0,-118.85 0,-118.85 0,-72.05 0,-72.05 0,-69.18 24.76,-66.85 55.24,-66.85 85.71,-66.85 110.47,-69.18 110.47,-72.05 110.47,-72.05 110.47,-118.85 110.47,-118.85"/>
+<path fill="none" stroke="black" d="M110.47,-118.85C110.47,-115.98 85.71,-113.65 55.24,-113.65 24.76,-113.65 0,-115.98 0,-118.85"/>
+<text xml:space="preserve" text-anchor="middle" x="55.24" y="-99.65" font-family="Times,serif" font-size="14.00">D1</text>
+<text xml:space="preserve" text-anchor="middle" x="55.24" y="-82.85" font-family="Times,serif" font-size="14.00">Destination Data</text>
+</g>
+<!-- P21 -->
+<g id="node2" class="node">
+<title>P21</title>
+<ellipse fill="none" stroke="black" cx="272.84" cy="-95.45" rx="67.68" ry="67.68"/>
+<text xml:space="preserve" text-anchor="middle" x="272.84" y="-99.65" font-family="Times,serif" font-size="14.00">2.1</text>
+<text xml:space="preserve" text-anchor="middle" x="272.84" y="-82.85" font-family="Times,serif" font-size="14.00">Budget Check</text>
+</g>
+<!-- D1&#45;&gt;P21 -->
+<g id="edge2" class="edge">
+<title>D1-&gt;P21</title>
+<path fill="none" stroke="black" d="M110.71,-104.98C110.71,-104.98 193.91,-104.98 193.91,-104.98"/>
+<polygon fill="black" stroke="black" points="193.91,-108.48 203.91,-104.98 193.91,-101.48 193.91,-108.48"/>
+</g>
+<!-- P21&#45;&gt;D1 -->
+<g id="edge1" class="edge">
+<title>P21-&gt;D1</title>
+<path fill="none" stroke="black" d="M205.48,-85.92C205.48,-85.92 122.47,-85.92 122.47,-85.92"/>
+<polygon fill="black" stroke="black" points="122.47,-82.42 112.47,-85.92 122.47,-89.42 122.47,-82.42"/>
+<text xml:space="preserve" text-anchor="middle" x="157.82" y="-83.65" font-family="Times,serif" font-size="14.00">Read Data</text>
+</g>
+<!-- P22 -->
+<g id="node3" class="node">
+<title>P22</title>
+<ellipse fill="none" stroke="black" cx="458.92" cy="-95.45" rx="81.4" ry="81.4"/>
+<text xml:space="preserve" text-anchor="middle" x="458.92" y="-99.65" font-family="Times,serif" font-size="14.00">2.2</text>
+<text xml:space="preserve" text-anchor="middle" x="458.92" y="-82.85" font-family="Times,serif" font-size="14.00">Landscape Match</text>
+</g>
+<!-- P21&#45;&gt;P22 -->
+<g id="edge3" class="edge">
+<title>P21-&gt;P22</title>
+<path fill="none" stroke="black" d="M340.81,-95.45C340.81,-95.45 365.71,-95.45 365.71,-95.45"/>
+<polygon fill="black" stroke="black" points="365.71,-98.95 375.71,-95.45 365.71,-91.95 365.71,-98.95"/>
+</g>
+<!-- P23 -->
+<g id="node4" class="node">
+<title>P23</title>
+<ellipse fill="none" stroke="black" cx="668.09" cy="-95.45" rx="90.77" ry="90.77"/>
+<text xml:space="preserve" text-anchor="middle" x="668.09" y="-99.65" font-family="Times,serif" font-size="14.00">2.3</text>
+<text xml:space="preserve" text-anchor="middle" x="668.09" y="-82.85" font-family="Times,serif" font-size="14.00">Duration Validation</text>
+</g>
+<!-- P22&#45;&gt;P23 -->
+<g id="edge4" class="edge">
+<title>P22-&gt;P23</title>
+<path fill="none" stroke="black" d="M540.69,-95.45C540.69,-95.45 565.51,-95.45 565.51,-95.45"/>
+<polygon fill="black" stroke="black" points="565.51,-98.95 575.51,-95.45 565.51,-91.95 565.51,-98.95"/>
+</g>
+<!-- P24 -->
+<g id="node5" class="node">
+<title>P24</title>
+<ellipse fill="none" stroke="black" cx="891.3" cy="-95.45" rx="95.45" ry="95.45"/>
+<text xml:space="preserve" text-anchor="middle" x="891.3" y="-99.65" font-family="Times,serif" font-size="14.00">2.4</text>
+<text xml:space="preserve" text-anchor="middle" x="891.3" y="-82.85" font-family="Times,serif" font-size="14.00">Compute Final Score</text>
+</g>
+<!-- P23&#45;&gt;P24 -->
+<g id="edge5" class="edge">
+<title>P23-&gt;P24</title>
+<path fill="none" stroke="black" d="M759.2,-95.45C759.2,-95.45 783.89,-95.45 783.89,-95.45"/>
+<polygon fill="black" stroke="black" points="783.89,-98.95 793.89,-95.45 783.89,-91.95 783.89,-98.95"/>
+</g>
+</g>
+</svg>
